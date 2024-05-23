@@ -23,12 +23,22 @@ const router = createRouter({
       meta:{
         title: 'About'
       }
+    },
+    {
+      path: '/job/:id',
+      name: 'job',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/Job.vue'),
+      meta:{
+        title: 'Job'
+      }
     }
   ]
 })
 router.beforeEach((to, from, next) => {
-  // we wanted to use the store here
- 
+  // we wanted to use the store here`
   if(to.meta.title)
   {
     window.document.title = to.meta.title;

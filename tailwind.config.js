@@ -2,7 +2,12 @@
 export default {
   content:['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily:{
+        Roboto: ['Roboto','sans-serif'],
+        Roboto_bold: ['Roboto-bold','sans-serif'],
+      }
+    },
   },
   plugins: [],
 }
