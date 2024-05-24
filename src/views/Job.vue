@@ -64,6 +64,56 @@ const modalSuccess = ref(false);
               <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
             </div>
 
+            <div class="mt-4">
+              <label for="mobile_number" class="block text-gray-700  mb-1">Letter of intent addressed to the Regional
+                Director. Please include the position and its item number with corresponding Functional
+                Division/Section/Unit</label>
+              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+            </div>
+
+
+            <div class="mt-4">
+              <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
+              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+            </div>
+
+            <div class="mt-4">
+              <label for="mobile_number" class="block text-gray-700  mb-1">Letter of intent addressed to the Regional
+                Director. Please include the position and its item number with corresponding Functional
+                Division/Section/Unit</label>
+              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+            </div>
+
+
+            <div class="mt-4">
+              <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
+              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+            </div>
+
+            <div class="mt-4">
+              <label for="mobile_number" class="block text-gray-700  mb-1">Letter of intent addressed to the Regional
+                Director. Please include the position and its item number with corresponding Functional
+                Division/Section/Unit</label>
+              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+            </div>
+
+
+            <div class="mt-4">
+              <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
+              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+            </div>
+            <div class="mt-4">
+          
+              <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
+              <span class="text-xs font-Roboto_bold">CERTIFICATION OF AUTHENTICITY AND VERACITY</span>
+              <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and of my personal knowledge amd belief, and the documents submitted herewith are original and/or certified true copies thereof.</p>
+            </div>
+            <div class="mt-4">
+          
+          <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
+          <span class="text-xs font-Roboto_bold">DATA PRIVACY CONTENT</span>
+          <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and of my personal knowledge amd belief, and the documents submitted herewith are original and/or certified true copies thereof.</p>
+        </div>
           </div>
 
           <div class="mt-8 flex " :class="step == 1 ? 'justify-end' : 'justify-between'">
@@ -72,7 +122,7 @@ const modalSuccess = ref(false);
             <button v-show="step != 2" @click="step++"
               class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-700 dark:bg-teal-600 ">Next</button>
             <button v-show="step == 2" type="submit" @click="modalSuccess = true"
-              class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-600 ">SUBMIT
+              class="bg-[#04508c] text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-600 ">SUBMIT
               APPLICATION</button>
           </div>
         </div>
