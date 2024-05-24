@@ -52,68 +52,31 @@ const modalSuccess = ref(false);
             <h1 class="text-center text-xl font-Roboto_bold">Application shall upload the ff: documents</h1>
 
             <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Letter of intent addressed to the Regional
+              <label for="mobile_number" class="block text-gray-700 text-sm mb-1">Letter of intent addressed to the
+                Regional
                 Director. Please include the position and its item number with corresponding Functional
                 Division/Section/Unit</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  " required accept="application/pdf">
             </div>
 
 
-            <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
-            </div>
 
             <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Letter of intent addressed to the Regional
-                Director. Please include the position and its item number with corresponding Functional
-                Division/Section/Unit</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
-            </div>
 
-
-            <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
-            </div>
-
-            <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Letter of intent addressed to the Regional
-                Director. Please include the position and its item number with corresponding Functional
-                Division/Section/Unit</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
-            </div>
-
-
-            <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
-            </div>
-
-            <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Letter of intent addressed to the Regional
-                Director. Please include the position and its item number with corresponding Functional
-                Division/Section/Unit</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
-            </div>
-
-
-            <div class="mt-4">
-              <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
-              <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
-            </div>
-            <div class="mt-4">
-          
               <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
               <span class="text-xs font-Roboto_bold">CERTIFICATION OF AUTHENTICITY AND VERACITY</span>
-              <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and of my personal knowledge amd belief, and the documents submitted herewith are original and/or certified true copies thereof.</p>
+              <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
+                of my personal knowledge amd belief, and the documents submitted herewith are original and/or certified
+                true copies thereof.</p>
             </div>
             <div class="mt-4">
-          
-          <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
-          <span class="text-xs font-Roboto_bold">DATA PRIVACY CONTENT</span>
-          <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and of my personal knowledge amd belief, and the documents submitted herewith are original and/or certified true copies thereof.</p>
-        </div>
+
+              <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
+              <span class="text-xs font-Roboto_bold">DATA PRIVACY CONTENT</span>
+              <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
+                of my personal knowledge amd belief, and the documents submitted herewith are original and/or certified
+                true copies thereof.</p>
+            </div>
           </div>
 
           <div class="mt-8 flex " :class="step == 1 ? 'justify-end' : 'justify-between'">
@@ -153,7 +116,7 @@ const modalSuccess = ref(false);
               <h3 class="text-lg leading-6 font-medium text-gray-900">
                 Successfully Submited!
 
-                
+
               </h3>
               <div class="mt-2">
                 <p class="text-sm leading-5 text-gray-500">
