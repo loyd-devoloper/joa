@@ -1,8 +1,8 @@
 <script setup>
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue'
-import { useRoute,useRouter } from 'vue-router';
-import { onBeforeMount, onMounted,ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { onBeforeMount, onMounted, ref } from 'vue';
 const route = useRoute();
 const router = useRouter();
 
@@ -10,28 +10,30 @@ const router = useRouter();
 </script>
 
 <template class="">
-  
-   <div class="font-Roboto">
+
+  <div class="font-Roboto">
     <Header />
     <section class="max-w-screen-xl mx-auto py-20">
       <h1 class=" pb-10 text-2xl font-Roboto_bold opacity-90 ">Available Job</h1>
 
       <!-- available job -->
       <div class="grid grid-cols-3 gap-10">
-        <div class="border p-4 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative">
+        <div class="border p-4 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative h-[19rem]">
           <!-- status -->
-          <!-- <span class="absolute font-Roboto_bold top-2 right-2 bg-green-500 w-[80px] text-center text-sm py-1 text-white rounded">Open</span> -->
-          <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 absolute font-Roboto_bold top-2 right-0">Open</span>
+          <span
+            class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 absolute font-Roboto_bold top-2 right-0">Open</span>
 
-          <h1 class=" font-Roboto_bold text-2xl max-w-[88%]">Programmer 1 dsadadad adsadjs jalkdjalsjdl</h1>
-          <p class=" px-2 pt-4 opacity-85 ">Description</p>
-          <p class="px-4 appearance-none">Role Overview
+          <h1 class=" font-Roboto_bold text-xl max-w-[88%] pb-2">Programmer 1 dsadadad adsadjs jalkdjalsjdl</h1>
+          <hr class="">
+          <p class=" px-2 pt-4 opacity-80 ">Description</p>
+          <p class="px-4 mb-10 text-sm opacity-70 line-clamp-5">Role Overview
             Experienced Web Developer specializing in C#, Shopify, and API integration with NAV ERP. Responsible for
             designing, developing, and maintaining our e-commerce platform, ensuring seamless integration with our NAV
             ERP system. Additionally, involved in administering the bespoke B2B and Shopify portals and providing
             support to its users.</p>
-          <div class="pt-2 flex justify-end">
-            <router-link  :to="{ name: 'job', params: { id: 'programing 1' } }" class="flex items-end gap-2 hover:text-blue-500 text-blue-700">
+          <div class="absolute bottom-4 right-3">
+            <router-link :to="{ name: 'job', params: { id: 'programing 1' } }"
+              class="flex items-end gap-2 hover:text-blue-500 text-blue-700">
               Apply now
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="w-5 h-5">
@@ -42,20 +44,22 @@ const router = useRouter();
           </div>
         </div>
 
-        <div class="border p-4 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative">
+        <div class="border p-4 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative h-[19rem]">
           <!-- status -->
-          <!-- <span class="absolute font-Roboto_bold top-2 right-2 bg-green-500 w-[80px] text-center text-sm py-1 text-white rounded">Open</span> -->
-          <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300 absolute font-Roboto_bold top-2 right-0">Close</span>
+          <span
+            class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 absolute font-Roboto_bold top-2 right-0">Open</span>
 
-          <h1 class=" font-Roboto_bold text-2xl max-w-[88%]">Programmer 1 dsadadad adsadjs jalkdjalsjdl</h1>
-          <p class=" px-2 pt-4 opacity-85 ">Description</p>
-          <p class="px-4 appearance-none">Role Overview
+          <h1 class=" font-Roboto_bold text-xl max-w-[88%] pb-2">Programmer 1 dsadadad adsadjs jalkdjalsjdl</h1>
+          <hr class="">
+          <p class=" px-2 pt-4 opacity-80 ">Description</p>
+          <p class="px-4 mb-10 text-sm opacity-70 line-clamp-5">Role Overview
             Experienced Web Developer specializing in C#, Shopify, and API integration with NAV ERP. Responsible for
             designing, developing, and maintaining our e-commerce platform, ensuring seamless integration with our NAV
             ERP system. Additionally, involved in administering the bespoke B2B and Shopify portals and providing
             support to its users.</p>
-          <div class="pt-2 flex justify-end">
-            <router-link  :to="{ name: 'job', params: { id: 'programing 3' } }" class="flex items-end gap-2 hover:text-blue-500 text-blue-700">
+          <div class="absolute bottom-4 right-3">
+            <router-link :to="{ name: 'job', params: { id: 'programing 1' } }"
+              class="flex items-end gap-2 hover:text-blue-500 text-blue-700">
               Apply now
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="w-5 h-5">
@@ -65,9 +69,10 @@ const router = useRouter();
             </router-link>
           </div>
         </div>
+
       </div>
     </section>
     <!-- footer -->
-    <Footer/>
+    <Footer />
   </div>
 </template>
