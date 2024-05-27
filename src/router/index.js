@@ -25,7 +25,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/job/:id',
+      path: '/job/:position/:id',
       name: 'job',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
@@ -41,7 +41,13 @@ router.beforeEach((to, from, next) => {
   // we wanted to use the store here`
   if(to.meta.title)
   {
-    window.document.title = to.meta.title;
+    if(to.params.position)
+      {
+        document.title = `${to.params.position} - ${to.meta.title}`
+      }else{
+        window.document.title = to.meta.title;
+      }
+    
   }
  next()
 })

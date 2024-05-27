@@ -4,13 +4,23 @@
 
 @font-face {
     font-family: 'Roboto';
-    src: url('/public/Roboto/Roboto-Regular.ttf');
+    src: url('/Roboto/Roboto-Regular.ttf');
     font-weight: normal;
      font-style: normal;
 }
 @font-face {
     font-family: 'Roboto-bold';
-    src: url('/public/Roboto/Roboto-Bold.ttf');
+    src: url('/Roboto/Roboto-Bold.ttf');
     font-weight:bold;
   font-style: normal;
 }
+
+
+  .reset_apperance > h1{
+    @apply  prose-h1:text-4xl !important;
+    
+  }
+ 
+  
+
+

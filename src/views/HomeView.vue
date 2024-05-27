@@ -11,7 +11,7 @@ const jobs = ref([]);
 const loading = ref(true);
 const fetchUser = async () => {
 
-  const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/users`);
+  const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/jobs`);
   jobs.value = data;
   loading.value = false;
 
@@ -25,10 +25,11 @@ onMounted(() => {
 
   <div class="font-Roboto">
     <Header />
-    <section class="max-w-screen-xl mx-auto py-20">
+   <div class="bg-gray-100">
+    <section class="max-w-screen-xl mx-auto py-20 ">
       <div class="relative w-[40rem] mx-auto  rounded-full">
         <input placeholder="Programmer III"
-          class="rounded-full w-full h-16 bg-transparent py-2 pl-8 pr-32 outline-none border-2 border-gray-100 shadow-md hover:outline-none focus:ring-teal-200 focus:border-teal-200"
+          class="rounded-full w-full h-16 bg-transparent py-2 pl-8 pr-32 outline-none border-2 border-gray-100 bg-white shadow-md hover:outline-none focus:ring-teal-200 focus:border-teal-200"
           type="text" name="query" id="query">
         <button type="submit"
           class="absolute inline-flex items-center h-10 px-4 py-2 text-sm text-white transition duration-150 ease-in-out rounded-full outline-none right-3 top-3 bg-teal-600 sm:px-6 sm:text-base sm:font-medium hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
@@ -72,9 +73,9 @@ onMounted(() => {
             <div class="w-3/4 h-4 rounded bg-gray-300"></div>
           </div>
         </div>
-        
+
         <div v-if="loading == false" v-for="jobItem in jobs" :key="jobItem"
-          class="border p-4 rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative h-[19rem]">
+          class="border p-4 bg-white rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative min-h-[19rem]">
           <!-- status -->
           <span v-if="jobItem.status"
             class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Open</span>
@@ -84,11 +85,13 @@ onMounted(() => {
           <h1 class=" font-Roboto_bold text-xl max-w-[88%] pb-2">{{ jobItem.job_title }}</h1>
           <hr class="">
           <p class=" px-2 pt-4 opacity-80 ">Description</p>
-          <p class="px-4 mb-10 text-sm opacity-70 line-clamp-6">
-          <pre v-html="jobItem.description" class="font-Roboto"></pre>
+          <p class="px-4 pt-2  mb-10 text-sm opacity-70 line-clamp-5">
+         
+            <article  v-html="jobItem.description" class="reset_apperance prose font-Roboto" ></article>
+       
           </p>
           <div class="absolute bottom-4 right-3">
-            <router-link :to="{ name: 'job', params: { id: 'programing 1' } }"
+            <router-link :to="{ name: 'job', params: { position: jobItem.job_title,id: jobItem.job_id } }"
               class="flex items-end gap-2 hover:text-blue-500 text-blue-700">
               Apply now
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -102,8 +105,18 @@ onMounted(() => {
 
 
       </div>
-    </section>
+    </section></div>
     <!-- footer -->
     <Footer />
   </div>
 </template>
+
+<style>
+.prose h1 {
+  @apply text-2xl font-bold;
+}
+
+.prose p {
+  @apply text-gray-700;
+}
+</style>
