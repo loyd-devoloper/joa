@@ -49,7 +49,7 @@ const modalSuccess = ref(false);
 
           </div>
           <div v-show="step == 2" class="mb-6">
-            <h1 class="text-center text-xl font-Roboto_bold">Application shall upload the ff: documents</h1>
+            <h1 class="text-center text-xl font-Roboto_bold">Application shall upload the ff: documents <span class="opacity-50">(pdf only)</span></h1>
 
             <div class="mt-4">
               <label for="mobile_number" class="block text-gray-700 text-sm mb-1">Letter of intent addressed to the
