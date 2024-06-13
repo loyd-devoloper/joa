@@ -2,70 +2,132 @@
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue'
 import { useRoute } from 'vue-router';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
+import moment from 'moment';
 import axios from 'axios';
 const route = useRoute();
-const step = ref(1);
+const step = ref(2);
 const modalSuccess = ref(false);
 const jobInfo = ref([]);
 const loading = ref(true)
+const data = reactive({
+  fname: '',
+  email: '',
+  mobile_number: '',
+  address: '',
+
+})
+// refs
+const fname = ref(null)
+const email = ref(null)
+const mobile_number = ref(null)
+const address = ref(null)
+const maincontainer = ref(null)
+const form = ref(null)
+const files = ref([])
+// fetch information
 const fetchJobInfo = async () => {
+  maincontainer.value.scrollIntoView({ behavior: 'smooth' });
   const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/job?id=${route.params.id}`)
   jobInfo.value = data;
   loading.value = false;
 }
+
+// submit application
+const submitApplication = async () => {
+  modalSuccess.value = true;
+}
+const errors = reactive({
+  fname: false,
+  email: false,
+  mobile_number: false,
+  address: false,
+});
+// next step
+const nextStep = () => {
+  errors.address = false;
+  errors.fname = false;
+  errors.email = false;
+  errors.mobile_number = false;
+  var check = true;
+  if (fname.value.value == '') {
+    // fname.value.required = true;
+    errors.fname = true;
+    check = true;
+  }
+  if (email.value.value == '') {
+    errors.email = true;
+    check = true;
+  }
+  if (mobile_number.value.value == '') {
+    errors.mobile_number = true;
+    check = true;
+  }
+  if (address.value.value == '') {
+    errors.address = true;
+    check = true;
+  }
+
+  if (fname.value.value != '' && email.value.value != '' && mobile_number.value.value != '' && address.value.value != '') {
+    step.value++;
+  }
+}
 onMounted(() => {
   fetchJobInfo()
 })
+
+
+import VueFilePond from 'vue-filepond';
+
 </script>
 
 <template class="">
-  <div class="font-Roboto">
+  <div class="font-Roboto" ref="maincontainer">
     <Header />
 
 
-    <main class="grid grid-cols-5 bg-gray-100">
 
-    <!-- loading -->
-      <div  v-show="loading" class="col-span-3">
+    <main class="grid grid-cols-3 bg-gray-100">
+      
+      <!-- loading -->
+      <div v-show="loading" class="col-span-2">
         <div class="w-full max-w-screen-lg mx-auto p-8">
           <div class="py-4 rounded shadow-md h-[32rem]  col-span-2 animate-pulse bg-gray-50">
-          <div class="flex p-4 space-x-4 sm:px-8 ">
-
-            <div class="flex-1 py-2 space-y-4">
-              <div class="w-full h-3 rounded bg-gray-300"></div>
-              <div class="w-5/6 h-3 rounded bg-gray-300"></div>
+            <div class="flex p-4 space-x-4 sm:px-8 ">
+              <div class="flex-1 py-2 space-y-4">
+                <div class="w-full h-3 rounded bg-gray-300"></div>
+                <div class="w-5/6 h-3 rounded bg-gray-300"></div>
+              </div>
+            </div>
+            <div class="p-4 space-y-4 sm:px-8">
+              <div class="w-full h-4 rounded bg-gray-300"></div>
+              <div class="w-full h-4 rounded bg-gray-300"></div>
+              <div class="w-3/4 h-4 rounded bg-gray-300"></div>
             </div>
           </div>
-          <div class="p-4 space-y-4 sm:px-8">
-            <div class="w-full h-4 rounded bg-gray-300"></div>
-            <div class="w-full h-4 rounded bg-gray-300"></div>
-            <div class="w-3/4 h-4 rounded bg-gray-300"></div>
-          </div>
-        </div>
         </div>
       </div>
-      <div  v-show="loading" class="col-span-2">
-        <div class="w-full max-w-screen-lg mx-auto p-8">
+      <div v-show="loading" class="col-span-1">
+        <div class="w-full max-w-screen-lg mx-auto py-8 pr-8">
           <div class="py-4 rounded shadow-md h-[19rem]  col-span-2 animate-pulse bg-gray-50">
-          <div class="flex p-4 space-x-4 sm:px-8 ">
+            <div class="flex p-4 space-x-4 sm:px-8 ">
 
-            <div class="flex-1 py-2 space-y-4">
-              <div class="w-full h-3 rounded bg-gray-300"></div>
-              <div class="w-5/6 h-3 rounded bg-gray-300"></div>
+              <div class="flex-1 py-2 space-y-4">
+                <div class="w-full h-3 rounded bg-gray-300"></div>
+                <div class="w-5/6 h-3 rounded bg-gray-300"></div>
+              </div>
+            </div>
+            <div class="p-4 space-y-4 sm:px-8">
+              <div class="w-full h-4 rounded bg-gray-300"></div>
+              <div class="w-full h-4 rounded bg-gray-300"></div>
+              <div class="w-3/4 h-4 rounded bg-gray-300"></div>
             </div>
           </div>
-          <div class="p-4 space-y-4 sm:px-8">
-            <div class="w-full h-4 rounded bg-gray-300"></div>
-            <div class="w-full h-4 rounded bg-gray-300"></div>
-            <div class="w-3/4 h-4 rounded bg-gray-300"></div>
-          </div>
-        </div>
         </div>
       </div>
       <!-- form  -->
-      <div v-show="loading == false" class=" col-span-3">
-        <div class="w-full max-w-screen-lg mx-auto p-8">
+      <div v-show="loading == false" class=" col-span-2">
+        <form @submit.prevent="submitApplication()" ref="form" class="w-full max-w-screen-lg mx-auto p-8">
           <div class="bg-white  p-8 rounded-lg shadow-md border ">
             <div class="flex justify-between">
               <h1 v-if="step == 1" class="text-center text-xl font-Roboto_bold">Basic Information</h1>
@@ -74,46 +136,116 @@ onMounted(() => {
               <h1 class="text-base font-bold text-gray-800/60  mb-4 uppercase">{{ step }}/2</h1>
 
             </div>
-            <!-- Shipping Address -->
+            <!-- step 1 -->
             <div v-show="step == 1" class="mb-6">
 
               <div class="grid grid-cols-2 gap-4 pt-10">
+
                 <div>
                   <label for="fname" class="block text-gray-700  mb-1">Fullname</label>
-                  <input type="text" id="fname" class="w-full rounded-lg border py-2 px-3  ">
+                  <input type="text" v-model="data.fname" ref="fname" class="w-full rounded-lg border py-2 px-3  "
+                    :class="errors.fname ? 'border-red-500' : ''">
+                  <small class="text-red-500" v-if="errors.fname"> The Fullname field is required. </small>
                 </div>
                 <div>
                   <label for="email" class="block text-gray-700  mb-1">Email</label>
-                  <input type="email" id="email" class="w-full rounded-lg border py-2 px-3  ">
+                  <input type="email" v-model="data.email" ref="email" class="w-full rounded-lg border py-2 px-3  "
+                    :class="errors.email ? 'border-red-500' : ''">
+                  <small class="text-red-500" v-if="errors.email"> The Email field is required. </small>
                 </div>
               </div>
               <div class="mt-4">
                 <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number</label>
-                <input type="text" id="mobile_number" class="w-full rounded-lg border py-2 px-3  ">
+                <input type="text" v-model="data.mobile_number" ref="mobile_number"
+                  class="w-full rounded-lg border py-2 px-3  " :class="errors.mobile_number ? 'border-red-500' : ''">
+                <small class="text-red-500" v-if="errors.mobile_number"> The Mobile Number field is required. </small>
               </div>
               <div class="mt-4">
                 <label for="address" class="block text-gray-700  mb-1">Complete Address</label>
-                <textarea type="text" id="address" class="w-full rounded-lg border py-2 px-3  "></textarea>
-
+                <textarea type="text" v-model="data.address" ref="address" class="w-full rounded-lg border py-2 px-3  "
+                  :class="errors.address ? 'border-red-500' : ''"></textarea>
+                <small class="text-red-500" v-if="errors.address"> The Address field is required. </small>
               </div>
 
 
             </div>
-            <div v-show="step == 2" class="mb-6">
+
+            <!-- step 2 -->
+            <div v-show="step == 2" class="my-10 space-y-10">
 
 
-              <div class="mt-4">
-                <label for="mobile_number" class="block text-gray-700 text-sm mb-1">Letter of intent addressed to the
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Letter of intent addressed to the
                   Regional
                   Director. Please include the position and its item number with corresponding Functional
                   Division/Section/Unit</label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  " required
-                  accept="application/pdf">
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
               </div>
 
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Duly accomplished Personal Data
+                  Sheet(PDS) and Work Experience Sheet with recent passport-sized picture (CS Form No. 212, Revised
+                  2017) which can be downloaded at <a href="https://www.csc.gov.ph/"
+                    class="text-blue-500 hover:underline" target="_blank">www.csc.gov.ph.</a></label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
 
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of valid and updated PRC
+                  License/ID <span class="text-gray-500 ">(if applicable)</span></label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
 
-              <div class="mt-4">
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of scholastic/academic
+                  recored such as but not limited to Transcript of Records (TOR) and Diploma, including completion of
+                  graduate and post-graduate units/degrees <span class="text-gray-500 ">(if applicable)</span></label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
+
+              
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of Certificate/s of Training attended</label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
+
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of Certificate of Employment, Contract of Service, or duly signed Service Record, whichever is/are applicable</label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
+
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of latest appointment  <span class="text-gray-500 ">(if applicable)</span></label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
+
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of the Performance Rating in the last rating period(s) covering one (1) year performance in the current/latest position prior to the deadline of submission<span class="text-gray-500 ">(if applicable)</span></label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
+
+              
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Checklist of Requirements and Omnibus Sworn Statement on the Certification on the Authenticity and Veracity (CAV) of the documents submitted and Data Privacy Consent Form pursuant to RA No. 10173 (Data Privacy Act of 2012), using the form (Annex C) of DepEd Order No. 007, s. 2023, notorized by authorized official</label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
+
+              <div>
+                <label for="mobile_number" class="block font-semibold text-sm mb-1">Means of Verification (MOVS) showing Outstanding Accomplishment, Application of Education, and Application of Learning and Development reckoned from the date of last issurance of appointment.</label>
+                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
+                  accept="application/pdf" required>
+              </div>
+
+              <div>
 
                 <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
                 <span class="text-xs font-Roboto_bold">CERTIFICATION OF AUTHENTICITY AND VERACITY</span>
@@ -122,7 +254,9 @@ onMounted(() => {
                   certified
                   true copies thereof.</p>
               </div>
-              <div class="mt-4">
+
+
+              <div>
 
                 <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
                 <span class="text-xs font-Roboto_bold">DATA PRIVACY CONTENT</span>
@@ -131,40 +265,54 @@ onMounted(() => {
                   certified
                   true copies thereof.</p>
               </div>
+
+
+              
             </div>
 
+            <!-- all button -->
             <div class="mt-8 flex " :class="step == 1 ? 'justify-end' : 'justify-between'">
-              <button v-show="step == 2" @click="step = 1"
+              <button type="button" v-show="step == 2" @click="step = 1"
                 class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-700 dark:bg-teal-600 ">Prev</button>
-              <button v-show="step != 2" @click="step++"
+              <button type="button" v-show="step != 2" @click="nextStep()"
                 class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-700 dark:bg-teal-600 ">Next</button>
-              <button v-show="step == 2" type="submit" @click="modalSuccess = true" :disabled="jobInfo.status == 0 ? true : false"
-                class="bg-[#04508c] text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-600 " :class="jobInfo.status == 0 ? 'opacity-50' : 'opacity-100'">SUBMIT
+              <button v-show="step == 2" type="submit" :disabled="jobInfo.status == 0 ? true : false"
+                class="bg-[#04508c] text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-600 "
+                :class="jobInfo.status == 0 ? 'opacity-50' : 'opacity-100'">SUBMIT
                 APPLICATION</button>
             </div>
           </div>
-        </div>
+        </form>
+     
       </div>
 
-      <!-- description -->
-      <div v-show="loading == false" class="col-span-2 ">
-        <div class="w-full max-w-screen-lg mx-auto p-8">
-          <div class="bg-white  p-8 rounded-lg shadow-md border relative ">
+      <!--title & description -->
+      <div v-show="loading == false" class="col-span-1 ">
+        <div class="w-full max-w-screen-lg mx-auto py-8 pr-8">
+          <div class="bg-white  p-8 rounded-lg shadow-md border relative">
             <div class="flex justify-between">
-              <h1 class="text-xl font-bold text-gray-800  mb-4 uppercase ">{{ route.params.position }}</h1>
+              <!-- title and status -->
+              <div>
+                <h1 class="text-xl font-bold text-gray-800  mb-4 uppercase ">{{ route.params.position }}</h1>
+                <p class="text-gray-500">Open until {{ moment(jobInfo.expiration_date).format('MMMM D, Y') }}</p>
+              </div>
               <span v-if="jobInfo.status"
-            class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Open</span>
-          <span v-else
-            class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Close</span>
+                class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Open</span>
+              <span v-else
+                class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Close</span>
 
             </div>
-          
-            <p class=" px-2 pt-2 opacity-80 ">Description</p>
-            <p class="px-4 pt-2  mb-10 text-sm opacity-70 ">
+            <hr>
+            <!-- descriptions -->
+            <div>
+              <p class=" pt-2 opacity-70 ">Description</p>
+              <p class="pt-2 px-4  mb-10 text-sm opacity-70 ">
 
-            <article v-html="jobInfo.description" class="reset_apperance prose font-Roboto"></article>
+              <article v-html="jobInfo.description" class="reset_apperance prose font-Roboto"></article>
 
-            </p>
+              </p>
+            </div>
+
 
 
 
