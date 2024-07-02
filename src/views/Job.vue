@@ -7,7 +7,7 @@ import moment from 'moment';
 import axios from 'axios';
 const route = useRoute();
 const step = ref(2);
-const modalSuccess = ref(false);
+const successModal = ref(null);
 const jobInfo = ref([]);
 const loading = ref(true)
 const data = reactive({
@@ -15,6 +15,8 @@ const data = reactive({
   email: '',
   mobile_number: '',
   address: '',
+  letter_of_intent: null,
+  pds: null,
 
 })
 // refs
@@ -25,17 +27,29 @@ const address = ref(null)
 const maincontainer = ref(null)
 const form = ref(null)
 const files = ref([])
+
+// toggle
+const toggleDecription = ref(true);
+
 // fetch information
 const fetchJobInfo = async () => {
   maincontainer.value.scrollIntoView({ behavior: 'smooth' });
-  const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/job?id=${route.params.id}`)
+  const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/recruitment/job?id=${route.params.id}`)
   jobInfo.value = data;
   loading.value = false;
 }
 
 // submit application
 const submitApplication = async () => {
-  modalSuccess.value = true;
+  try {
+    const formData = new FormData();
+    formData.append('letter_of_intent',data.letter_of_intent);
+    formData.append('pds',data.pds);
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND}/api/recruitment/submit/application`,formData )
+    console.log(res);
+  } catch (error) {
+
+  }
 }
 const errors = reactive({
   fname: false,
@@ -72,12 +86,24 @@ const nextStep = () => {
     step.value++;
   }
 }
+
+// file upload
+const fileUpload = (type) =>{
+  switch(type){
+    case 1: 
+        data.letter_of_intent = event.target.files[0];
+    case 2: 
+        data.pds = event.target.files[0];
+        
+  }
+
+}
 onMounted(() => {
   fetchJobInfo()
 })
 
 
-import VueFilePond from 'vue-filepond';
+
 
 </script>
 
@@ -87,8 +113,8 @@ import VueFilePond from 'vue-filepond';
 
 
 
-    <main class="grid grid-cols-3 bg-gray-100">
-      
+    <main class="flex flex-col-reverse xl:flex-row gap-x-8   px-8 bg-gray-100">
+
       <!-- loading -->
       <div v-show="loading" class="col-span-2">
         <div class="w-full max-w-screen-lg mx-auto p-8">
@@ -126,8 +152,8 @@ import VueFilePond from 'vue-filepond';
         </div>
       </div>
       <!-- form  -->
-      <div v-show="loading == false" class=" col-span-2">
-        <form @submit.prevent="submitApplication()" ref="form" class="w-full max-w-screen-lg mx-auto p-8">
+      <div v-show="loading == false" class="flex-1 flex-grow-[2.5]">
+        <form @submit.prevent="submitApplication()" ref="form" class="w-full max-w-screen-lg mx-auto py-8">
           <div class="bg-white  p-8 rounded-lg shadow-md border ">
             <div class="flex justify-between">
               <h1 v-if="step == 1" class="text-center text-xl font-Roboto_bold">Basic Information</h1>
@@ -175,74 +201,84 @@ import VueFilePond from 'vue-filepond';
 
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Letter of intent addressed to the
+                <label for="mobile_number" class="label-text">Letter of intent addressed to the
                   Regional
                   Director. Please include the position and its item number with corresponding Functional
                   Division/Section/Unit</label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <input type="file"  @change="fileUpload(1)" class="file-input  w-full file-input-ghost border-gray-300 "
+                  accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Duly accomplished Personal Data
+                <label for="mobile_number" class="label-text">Duly accomplished Personal Data
                   Sheet(PDS) and Work Experience Sheet with recent passport-sized picture (CS Form No. 212, Revised
                   2017) which can be downloaded at <a href="https://www.csc.gov.ph/"
                     class="text-blue-500 hover:underline" target="_blank">www.csc.gov.ph.</a></label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <input type="file" @change="fileUpload(2)" class="file-input  w-full file-input-ghost border-gray-300  "
+                  accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of valid and updated PRC
+                <label for="mobile_number" class="label-text">Photocopy of valid and updated PRC
                   License/ID <span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <input type="file" @change="fileUpload(3)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of scholastic/academic
+                <label for="mobile_number" class="label-text">Photocopy of scholastic/academic
                   recored such as but not limited to Transcript of Records (TOR) and Diploma, including completion of
                   graduate and post-graduate units/degrees <span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <input type="file" @change="fileUpload(4)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
               </div>
 
-              
-              <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of Certificate/s of Training attended</label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
-              </div>
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of Certificate of Employment, Contract of Service, or duly signed Service Record, whichever is/are applicable</label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <label for="mobile_number" class="label-text">Photocopy of Certificate/s of
+                  Training attended</label>
+                <input type="file" @change="fileUpload(5)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of latest appointment  <span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <label for="mobile_number" class="label-text">Photocopy of Certificate of
+                  Employment, Contract of Service, or duly signed Service Record, whichever is/are applicable</label>
+                <input type="file" @change="fileUpload(6)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Photocopy of the Performance Rating in the last rating period(s) covering one (1) year performance in the current/latest position prior to the deadline of submission<span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
-              </div>
-
-              
-              <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Checklist of Requirements and Omnibus Sworn Statement on the Certification on the Authenticity and Veracity (CAV) of the documents submitted and Data Privacy Consent Form pursuant to RA No. 10173 (Data Privacy Act of 2012), using the form (Annex C) of DepEd Order No. 007, s. 2023, notorized by authorized official</label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <label for="mobile_number" class="label-text">Photocopy of latest appointment
+                  <span class="text-gray-500 ">(if applicable)</span></label>
+                <input type="file" @change="fileUpload(7)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="block font-semibold text-sm mb-1">Means of Verification (MOVS) showing Outstanding Accomplishment, Application of Education, and Application of Learning and Development reckoned from the date of last issurance of appointment.</label>
-                <input type="file" id="mobile_number" class="w-full rounded-lg border py-2 px-3  "
-                  accept="application/pdf" required>
+                <label for="mobile_number" class="label-text">Photocopy of the Performance Rating
+                  in the last rating period(s) covering one (1) year performance in the current/latest position prior to
+                  the deadline of submission<span class="text-gray-500 ">(if applicable)</span></label>
+                <input type="file" @change="fileUpload(8)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
+              </div>
+
+
+              <div>
+                <label for="mobile_number" class="label-text">Checklist of Requirements and
+                  Omnibus Sworn Statement on the Certification on the Authenticity and Veracity (CAV) of the documents
+                  submitted and Data Privacy Consent Form pursuant to RA No. 10173 (Data Privacy Act of 2012), using the
+                  form (Annex C) of DepEd Order No. 007, s. 2023, notorized by authorized official</label>
+                <input type="file" @change="fileUpload(9)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
+              </div>
+
+              <div>
+                <label for="mobile_number" class="label-text">Means of Verification (MOVS) showing
+                  Outstanding Accomplishment, Application of Education, and Application of Learning and Development
+                  reckoned from the date of last issurance of appointment.</label>
+                <input type="file" @change="fileUpload(10)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
               </div>
 
               <div>
@@ -267,7 +303,7 @@ import VueFilePond from 'vue-filepond';
               </div>
 
 
-              
+
             </div>
 
             <!-- all button -->
@@ -278,17 +314,17 @@ import VueFilePond from 'vue-filepond';
                 class="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-700 dark:bg-teal-600 ">Next</button>
               <button v-show="step == 2" type="submit" :disabled="jobInfo.status == 0 ? true : false"
                 class="bg-[#04508c] text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-600 "
-                :class="jobInfo.status == 0 ? 'opacity-50' : 'opacity-100'">SUBMIT
+                :class="jobInfo.status == 0 ? 'opacity-50 cursor-not-allowed' : 'opacity-100'">SUBMIT
                 APPLICATION</button>
             </div>
           </div>
         </form>
-     
+
       </div>
 
       <!--title & description -->
-      <div v-show="loading == false" class="col-span-1 ">
-        <div class="w-full max-w-screen-lg mx-auto py-8 pr-8">
+      <div v-show="loading == false" class="flex-1">
+        <div class="w-full max-w-screen-lg mx-auto py-8 ">
           <div class="bg-white  p-8 rounded-lg shadow-md border relative">
             <div class="flex justify-between">
               <!-- title and status -->
@@ -305,8 +341,17 @@ import VueFilePond from 'vue-filepond';
             <hr>
             <!-- descriptions -->
             <div>
-              <p class=" pt-2 opacity-70 ">Description</p>
-              <p class="pt-2 px-4  mb-10 text-sm opacity-70 ">
+              <div class="flex justify-between">
+                <p class=" pt-2 opacity-70 ">Description</p>
+                <button @click="toggleDecription = !toggleDecription">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                  </svg>
+
+                </button>
+              </div>
+              <p class="pt-2 px-4  mb-10 text-sm opacity-70 " :class="toggleDecription ? 'hidden xl:block' : 'block xl:hidden'">
 
               <article v-html="jobInfo.description" class="reset_apperance prose font-Roboto"></article>
 
@@ -327,47 +372,39 @@ import VueFilePond from 'vue-filepond';
     <Footer />
 
 
-    <!-- modal -->
-    <div v-show="modalSuccess" class="fixed z-10 inset-0 overflow-y-auto">
-      <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+    <!-- success modal -->
+    <dialog ref="successModal" class="modal z-50">
+      <div class="modal-box w-11/12 max-w-lg bg-white">
+
+        <div class="sm:flex sm:items-start">
+          <div
+            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+            <svg class="h-6 w-6 text-green-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-bold text-gray-900">
+              Successfully Submited!
+
+
+            </h3>
+            <div class="mt-2">
+              <p class="text-sm leading-5 text-gray-500">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
+                mollitia inventore quod. Yay!
+              </p>
+            </div>
+          </div>
         </div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
-        <div
-          class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-          <div class="sm:flex sm:items-start">
-            <div
-              class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-              <svg class="h-6 w-6 text-green-600" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-              <h3 class="text-lg leading-6 font-medium text-gray-900">
-                Successfully Submited!
-
-
-              </h3>
-              <div class="mt-2">
-                <p class="text-sm leading-5 text-gray-500">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem
-                  mollitia inventore quod. Yay!
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-
-            <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
-              <button type="button" @click="modalSuccess = false"
-                class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5">
-                Close
-              </button>
-            </span>
-          </div>
+        <div class="modal-action">
+          <form method="dialog">
+            <!-- if there is a button, it will close the modal -->
+            <button class="btn">Close</button>
+          </form>
         </div>
       </div>
-    </div>
+    </dialog>
+
   </div>
 </template>

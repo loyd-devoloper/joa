@@ -17,7 +17,7 @@ const maincontainer = ref(null)
 const fetchUser = async (page = 1) => {
   maincontainer.value.scrollIntoView({ behavior: 'smooth' });
   loading.value = true;
-  const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/jobs?page=${page}&q=${search.value}`);
+  const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/recruitment/jobs?page=${page}&q=${search.value}`);
 
   if (!!data.prev_page_url) {
     prevPage.value = data.prev_page_url.split('?page=')[1];
@@ -51,8 +51,10 @@ onMounted(() => {
   <div class="font-Roboto" ref="maincontainer">
     <Header />
     <div class="bg-gray-100 min-h-[calc(100svh-24.5rem)]">
-      <section class="max-w-screen-xl mx-auto py-20 ">
+      <div class="w-full  h-[20rem] flex items-center relative overflow-hidden">
+        <img src="/assets/homepage-bg.jpg" class="absolute  object-cover w-full h-full brightness-50" alt="">
         <form @submit.prevent="searchJob()" class="relative w-[40rem] mx-auto  rounded-full">
+          
           <input placeholder="ex: Programmer III" v-model="search"
             class="rounded-full w-full h-16 bg-transparent py-2 pl-8 pr-32 outline-none border-2 border-gray-100 bg-white shadow-md hover:outline-none focus:ring-teal-200 focus:border-teal-200"
             type="text" name="query" id="query">
@@ -66,7 +68,10 @@ onMounted(() => {
             Search
           </button>
         </form>
-        <h1 class=" pb-10 text-2xl text-center pt-10 font-Roboto_bold opacity-90 ">Available Job</h1>
+       </div>
+      <section class="max-w-screen-xl mx-auto pt-14 pb-20 ">
+     
+        <h1 class=" pb-10 text-2xl text-center pt-10 font-Roboto_bold text-black/90">Available Job</h1>
 
         <!-- available job -->
         <div class="grid grid-cols-3 gap-10">
@@ -108,7 +113,7 @@ onMounted(() => {
             <span v-else
               class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Close</span> -->
 
-            <h1 class=" font-Roboto_bold text-2xl max-w-[88%] pb-2">{{ jobItem.job_title }}</h1>
+            <h1 class=" font-Roboto_bold text-2xl max-w-[88%] text-black/90 pb-2">{{ jobItem.job_title }}</h1>
           <hr>
             <div class="space-y-3 mt-3">
               <!-- status  -->
