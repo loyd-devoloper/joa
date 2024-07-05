@@ -6,7 +6,7 @@ import { onMounted, reactive, ref } from 'vue';
 import moment from 'moment';
 import axios from 'axios';
 const route = useRoute();
-const step = ref(2);
+const step = ref(1);
 const successModal = ref(null);
 const jobInfo = ref([]);
 const loading = ref(true)
@@ -17,8 +17,49 @@ const data = reactive({
   address: '',
   letter_of_intent: null,
   pds: null,
+  prc: null,
+  eligibility: null,
+  tor: null,
+  training_attended: null,
+  certificate_of_employment: null,
+  latest_appointment: null,
+  performance_rating: null,
+  cav: null,
+  movs: null,
+
 
 })
+
+// file upload
+const fileUpload = (type) => {
+  console.log(type)
+  if (type === 1) {
+  data.letter_of_intent = event.target.files[0];
+  console.log('intent');
+} else if (type === 2) {
+  data.pds = event.target.files[0];
+  console.log('pds');
+} else if (type === 3) {
+  data.prc = event.target.files[0];
+} else if (type === 4) {
+  data.eligibility = event.target.files[0];
+} else if (type === 5) {
+  data.tor = event.target.files[0];
+} else if (type === 6) {
+  data.training_attended = event.target.files[0];
+} else if (type === 7) {
+  data.certificate_of_employment = event.target.files[0];
+} else if (type === 8) {
+  data.latest_appointment = event.target.files[0];
+} else if (type === 9) {
+  data.performance_rating = event.target.files[0];
+} else if (type === 10) {
+  data.cav = event.target.files[0];
+} else if (type === 11) {
+  data.movs = event.target.files[0];
+}
+
+}
 // refs
 const fname = ref(null)
 const email = ref(null)
@@ -43,9 +84,23 @@ const fetchJobInfo = async () => {
 const submitApplication = async () => {
   try {
     const formData = new FormData();
-    formData.append('letter_of_intent',data.letter_of_intent);
-    formData.append('pds',data.pds);
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND}/api/recruitment/submit/application`,formData )
+    formData.append('letter_of_intent', data.letter_of_intent);
+    formData.append('pds', data.pds); 
+    formData.append('prc', data.prc); 
+    formData.append('eligibility', data.eligibility); 
+    formData.append('tor', data.tor); 
+    formData.append('training_attended', data.training_attended); 
+    formData.append('certificate_of_employment', data.certificate_of_employment); 
+    formData.append('latest_appointment', data.latest_appointment); 
+    formData.append('performance_rating', data.performance_rating); 
+    formData.append('cav', data.cav); 
+    formData.append('movs', data.movs); 
+    formData.append('fname', data.fname); 
+    formData.append('email', data.email); 
+    formData.append('mobile_number', data.mobile_number); 
+    formData.append('address', data.address); 
+    formData.append('job_id',route.params.id); 
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND}/api/recruitment/submit/application`, formData)
     console.log(res);
   } catch (error) {
 
@@ -87,19 +142,10 @@ const nextStep = () => {
   }
 }
 
-// file upload
-const fileUpload = (type) =>{
-  switch(type){
-    case 1: 
-        data.letter_of_intent = event.target.files[0];
-    case 2: 
-        data.pds = event.target.files[0];
-        
-  }
 
-}
 onMounted(() => {
   fetchJobInfo()
+  
 })
 
 
@@ -201,16 +247,16 @@ onMounted(() => {
 
 
               <div>
-                <label for="mobile_number" class="label-text">Letter of intent addressed to the
+                <label class="label-text">Letter of intent addressed to the
                   Regional
                   Director. Please include the position and its item number with corresponding Functional
                   Division/Section/Unit</label>
-                <input type="file"  @change="fileUpload(1)" class="file-input  w-full file-input-ghost border-gray-300 "
+                <input type="file" @change="fileUpload(1)" class="file-input  w-full file-input-ghost border-gray-300 "
                   accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="label-text">Duly accomplished Personal Data
+                <label class="label-text">Duly accomplished Personal Data
                   Sheet(PDS) and Work Experience Sheet with recent passport-sized picture (CS Form No. 212, Revised
                   2017) which can be downloaded at <a href="https://www.csc.gov.ph/"
                     class="text-blue-500 hover:underline" target="_blank">www.csc.gov.ph.</a></label>
@@ -219,71 +265,79 @@ onMounted(() => {
               </div>
 
               <div>
-                <label for="mobile_number" class="label-text">Photocopy of valid and updated PRC
+                <label class="label-text">Photocopy of valid and updated PRC
                   License/ID <span class="text-gray-500 ">(if applicable)</span></label>
                 <input type="file" @change="fileUpload(3)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
-
               <div>
-                <label for="mobile_number" class="label-text">Photocopy of scholastic/academic
-                  recored such as but not limited to Transcript of Records (TOR) and Diploma, including completion of
-                  graduate and post-graduate units/degrees <span class="text-gray-500 ">(if applicable)</span></label>
+                <label class="label-text">Photocopy of Certificate of Eligibility/Rating <span
+                    class="text-gray-500 ">(if applicable)</span></label>
                 <input type="file" @change="fileUpload(4)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
 
-
               <div>
-                <label for="mobile_number" class="label-text">Photocopy of Certificate/s of
-                  Training attended</label>
+                <label class="label-text">Photocopy of scholastic/academic
+                  recored such as but not limited to Transcript of Records (TOR) and Diploma, including completion of
+                  graduate and post-graduate units/degrees <span class="text-gray-500 ">(if applicable)</span></label>
                 <input type="file" @change="fileUpload(5)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
 
+
               <div>
-                <label for="mobile_number" class="label-text">Photocopy of Certificate of
-                  Employment, Contract of Service, or duly signed Service Record, whichever is/are applicable</label>
+                <label class="label-text">Photocopy of Certificate/s of
+                  Training attended</label>
                 <input type="file" @change="fileUpload(6)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="label-text">Photocopy of latest appointment
-                  <span class="text-gray-500 ">(if applicable)</span></label>
+                <label class="label-text">Photocopy of Certificate of
+                  Employment, Contract of Service, or duly signed Service Record, whichever is/are applicable</label>
                 <input type="file" @change="fileUpload(7)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
 
               <div>
-                <label for="mobile_number" class="label-text">Photocopy of the Performance Rating
-                  in the last rating period(s) covering one (1) year performance in the current/latest position prior to
-                  the deadline of submission<span class="text-gray-500 ">(if applicable)</span></label>
+                <label class="label-text">Photocopy of latest appointment
+                  <span class="text-gray-500 ">(if applicable)</span></label>
                 <input type="file" @change="fileUpload(8)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
 
 
               <div>
-                <label for="mobile_number" class="label-text">Checklist of Requirements and
-                  Omnibus Sworn Statement on the Certification on the Authenticity and Veracity (CAV) of the documents
-                  submitted and Data Privacy Consent Form pursuant to RA No. 10173 (Data Privacy Act of 2012), using the
-                  form (Annex C) of DepEd Order No. 007, s. 2023, notorized by authorized official</label>
+                <label class="label-text">Photocopy of the Performance Rating
+                  in the last rating period(s) covering one (1) year performance in the current/latest position prior to
+                  the deadline of submission<span class="text-gray-500 ">(if applicable)</span></label>
                 <input type="file" @change="fileUpload(9)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
 
+
               <div>
-                <label for="mobile_number" class="label-text">Means of Verification (MOVS) showing
-                  Outstanding Accomplishment, Application of Education, and Application of Learning and Development
-                  reckoned from the date of last issurance of appointment.</label>
+                <label class="label-text">Checklist of Requirements and
+                  Omnibus Sworn Statement on the Certification on the Authenticity and Veracity (CAV) of the documents
+                  submitted and Data Privacy Consent Form pursuant to RA No. 10173 (Data Privacy Act of 2012), using the
+                  form (Annex C) of DepEd Order No. 007, s. 2023, notorized by authorized official</label>
                 <input type="file" @change="fileUpload(10)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
               </div>
 
               <div>
+                <label class="label-text">Means of Verification (MOVS) showing
+                  Outstanding Accomplishment, Application of Education, and Application of Learning and Development
+                  reckoned from the date of last issurance of appointment.</label>
+                <input type="file" @change="fileUpload(11)" class="file-input  w-full file-input-ghost border-gray-300"
+                  accept="application/pdf">
+              </div>
 
-                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
+
+              <div>
+
+                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2" required>
                 <span class="text-xs font-Roboto_bold">CERTIFICATION OF AUTHENTICITY AND VERACITY</span>
                 <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
                   of my personal knowledge amd belief, and the documents submitted herewith are original and/or
@@ -294,7 +348,7 @@ onMounted(() => {
 
               <div>
 
-                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2">
+                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2" required>
                 <span class="text-xs font-Roboto_bold">DATA PRIVACY CONTENT</span>
                 <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
                   of my personal knowledge amd belief, and the documents submitted herewith are original and/or
@@ -351,7 +405,8 @@ onMounted(() => {
 
                 </button>
               </div>
-              <p class="pt-2 px-4  mb-10 text-sm opacity-70 " :class="toggleDecription ? 'hidden xl:block' : 'block xl:hidden'">
+              <p class="pt-2 px-4  mb-10 text-sm opacity-70 "
+                :class="toggleDecription ? 'hidden xl:block' : 'block xl:hidden'">
 
               <article v-html="jobInfo.description" class="reset_apperance prose font-Roboto"></article>
 

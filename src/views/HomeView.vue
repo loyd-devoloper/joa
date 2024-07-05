@@ -107,7 +107,7 @@ onMounted(() => {
           <div v-if="loading == false" v-for="jobItem in jobs" :key="jobItem"
             class="border p-4 bg-white rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative min-h-[19rem]">
             <!-- status -->
-            <!-- <span v-if="jobItem.status"
+            <!-- <span v-if="jobItem.status_of_hiring"
               class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">
               Open</span>
             <span v-else
