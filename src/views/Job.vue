@@ -11,11 +11,15 @@ import axios from 'axios';
 const route = useRoute();
 const step = ref(1);
 const successModal = ref(null);
+const previewModal = ref(null);
 const application_code = ref('');
-const jobInfo = ref([]);
+const jobInfo = ref({
+  fname: 'dsad'
+});
 const loading = ref(true)
 const applicationLoading = ref(false)
-
+// preview
+const letter_of_intent_preview = ref(null)
 // all reactive data
 const data = reactive({
   fname: '',
@@ -50,10 +54,10 @@ const fileUpload = (type) => {
 
   if (type === 1) {
     data.letter_of_intent = event.target.files[0];
-    console.log('intent');
+    letter_of_intent_preview.value = data.letter_of_intent.name;
   } else if (type === 2) {
     data.pds = event.target.files[0];
-    console.log('pds');
+
   } else if (type === 3) {
     data.prc = event.target.files[0];
   } else if (type === 4) {
@@ -98,17 +102,18 @@ const fetchJobInfo = async () => {
 // submit application
 const submitApplication = async () => {
   try {
-    applicationLoading.value = true;
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+    previewModal.value.showModal();
+    // applicationLoading.value = true;
+    // const formData = new FormData();
+    // Object.entries(data).forEach(([key, value]) => {
+    //   formData.append(key, value);
+    // });
 
-    formData.append('job_id', route.params.id);
-    const res = await axios.post(`/api/recruitment/submit/application`, formData)
-    applicationLoading.value = false;
-    application_code.value = res.data;
-    successModal.value.showModal()
+    // formData.append('job_id', route.params.id);
+    // const res = await axios.post(`/api/recruitment/submit/application`, formData)
+    // applicationLoading.value = false;
+    // application_code.value = res.data;
+    // successModal.value.showModal()
 
   } catch (error) {
 
@@ -146,7 +151,7 @@ watch(data, (newValue, OldValue) => {
 onMounted(async () => {
   await fetchJobInfo()
 
-
+  previewModal.value.showModal();
 
 })
 
@@ -157,9 +162,15 @@ onMounted(async () => {
 <template class="">
   <div class="font-Roboto" ref="maincontainer">
     <Header />
+    <div v-if="Object.keys(jobInfo).length === 0" class="bg-gray-100">
+      <div class="h-screen flex flex-col justify-center items-center">
+        <h1 class="text-8xl font-bold text-gray-800">404</h1>
+        <p class="text-4xl font-medium text-gray-800">Page Not Found</p>
+        <a href="/" class="mt-4 text-xl text-blue-600 hover:underline">Go back home</a>
+      </div>
+    </div>
 
-
-    <main class="flex flex-col-reverse xl:flex-row gap-x-8   px-8 bg-gray-100">
+    <main v-else class="flex flex-col-reverse xl:flex-row gap-x-8   px-8 bg-gray-100">
 
       <!-- loading -->
       <div v-show="loading" class="flex-1 flex-grow-[2.5]">
@@ -282,8 +293,9 @@ onMounted(async () => {
                 <div>
                   <label for="birthdate" class="block text-gray-700  mb-1">Birthdate<small
                       class="text-red-500 ">(Required)</small></label>
-                  <input type="date" v-model="data.birth_date" ref="birth_date" class="w-full rounded-lg border py-2 px-3  "
-                    :class="errors.birth_date ? 'border-red-500' : ''" required>
+                  <input type="date" v-model="data.birth_date" ref="birth_date"
+                    class="w-full rounded-lg border py-2 px-3  " :class="errors.birth_date ? 'border-red-500' : ''"
+                    required>
                   <small class="text-red-500" v-if="errors.birth_date"> The Birthdate field is required. </small>
                 </div>
               </div>
@@ -590,6 +602,314 @@ onMounted(async () => {
         </div>
       </div>
     </dialog>
+    <!-- preview modal -->
+    <dialog ref="previewModal" class="modal z-50">
+      <div class="modal-box  max-w-screen-xl bg-white">
 
+        <div class="">
+
+          <div class="mt-3 sm:mt-0 sm:ml-4 sm:text-left space-y-10">
+            <h3 class="text-lg leading-6 font-bold text-gray-900">
+              Preview
+            </h3>
+            <div class="mt-2 space-y-4 ">
+                 <!-- Basic Information -->
+              <div class="collapse  collapse-arrow  	 bg-base-200 border-none outline-none ring-0">
+                <input type="checkbox" checked />
+                <div class="collapse-title text-xl font-medium"> Basic Information</div>
+                <div class="collapse-content">
+               
+
+                  <div class="mb-6">
+
+                    <!-- input -->
+                    <div class="grid grid-cols-1 gap-4 pt-10">
+
+                      <div>
+                        <label for="fname" class="block text-gray-700  mb-1">First name<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <input type="text" name="fname" v-model="data.fname" ref="fname"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.fname ? 'border-red-500' : ''"
+                          required formnovalidate disabled="true">
+                        <small class="text-red-500" v-if="errors.fname"> The First name field is required. </small>
+                      </div>
+                      <div>
+                        <label for="middlename" class="block text-gray-700  mb-1">Middle Name<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <input type="middlename" v-model="data.mname" ref="mname"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.mname ? 'border-red-500' : ''"
+                          required disabled="true">
+                        <small class="text-red-500" v-if="errors.mname"> The Last name field is required. </small>
+                      </div>
+                      <div>
+                        <label for="lastname" class="block text-gray-700  mb-1">Last name<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <input type="lastname" v-model="data.lname" ref="lname"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.lname ? 'border-red-500' : ''"
+                          required disabled="true">
+                        <small class="text-red-500" v-if="errors.lname"> The Last name field is required. </small>
+                      </div>
+                      <div>
+                        <label for="email" class="block text-gray-700  mb-1">Email<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <input type="email" v-model="data.email" ref="email"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.email ? 'border-red-500' : ''"
+                          required disabled="true">
+                        <small class="text-red-500" v-if="errors.email"> The Email field is required. </small>
+                      </div>
+                      <div>
+                        <label for="religion" class="block text-gray-700  mb-1">Religion</label>
+                        <input type="text" disabled="true" name="religion" v-model="data.religion" ref="religion"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.religion ? 'border-red-500' : ''">
+
+                      </div>
+                      <div>
+                        <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <input type="text" disabled="true" name="mobile_number" v-model="data.mobile_number"
+                          ref="mobile_number" class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.mobile_number ? 'border-red-500' : ''" required>
+                        <small class="text-red-500" v-if="errors.mobile_number"> The Mobile Number field is required.
+                        </small>
+                      </div>
+                      <div>
+                        <label for="birthdate" class="block text-gray-700  mb-1">Birthdate<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <input type="date" disabled="true" v-model="data.birth_date" ref="birth_date"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.birth_date ? 'border-red-500' : ''" required>
+                        <small class="text-red-500" v-if="errors.birth_date"> The Birthdate field is required. </small>
+                      </div>
+                      <div>
+                        <label for="disability" class="block text-gray-700  mb-1">Disability</label>
+                        <input type="text" disabled="true" name="disability" v-model="data.disability" ref="disability"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.disability ? 'border-red-500' : ''">
+
+                      </div>
+                      <div>
+                        <label for="ethnic_group" class="block text-gray-700  mb-1">Ethnic Group</label>
+                        <input type="text" disabled="true" v-model="data.ethnic_group" ref="ethnic_group"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.ethnic_group ? 'border-red-500' : ''">
+
+                      </div>
+                      <div>
+                        <label for="sex" class="block text-gray-700  mb-1">Sex<small
+                            class="text-red-500 ">(Required)</small></label>
+
+                        <select v-model="data.sex" disabled="true" class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.sex ? 'border-red-500' : ''" required>
+                          <option value="M">Male</option>
+                          <option value="F">Female</option>
+                        </select>
+                        <small class="text-red-500" v-if="errors.sex"> The Sex field is required. </small>
+                      </div>
+                      <div>
+                        <label for="civil_status" class="block text-gray-700  mb-1">Civil Status<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <select v-model="data.civil_status" disabled="true" class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.civil_status ? 'border-red-500' : ''" required>
+                          <option value="" disabled selected>Select an option</option>
+                          <option value="single">Single</option>
+                          <option value="married">Married</option>
+                          <option value="divorced">Divorced</option>
+                          <option value="separated">Separated</option>
+                          <option value="widowed">Widowed</option>
+                        </select>
+                        <small class="text-red-500" v-if="errors.civil_status"> The Civil Status field is required.
+                        </small>
+                      </div>
+                      <div>
+                        <label for="address" class="block text-gray-700  mb-1">Complete Address<small
+                            class="text-red-500 ">(Required)</small></label>
+                        <textarea type="text" v-model="data.address" disabled="true" ref="address"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.address ? 'border-red-500' : ''"
+                          required></textarea>
+                        <small class="text-red-500" v-if="errors.address"> The Address field is required. </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Attachment -->
+              <div class="collapse  collapse-arrow  	 bg-base-200">
+                <input type="checkbox" checked />
+                <div class="collapse-title text-xl font-medium">Attachment</div>
+                <div class="collapse-content">
+
+
+                  <div class="my-10 space-y-10">
+
+
+                    <div>
+                      <label class="label-text">Letter of intent addressed to the
+                        Regional
+                        Director. Please include the position and its item number with corresponding Functional
+                        Division/Section/Unit<small class="text-red-500 ">(Required)</small></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img v-if="!!letter_of_intent_preview" src="/assets/pdf.png" alt="">
+                        <img v-else src="/assets/no-file.png" class="size-10" alt="">
+                        <small v-if="!!letter_of_intent_preview" class="grow">{{ letter_of_intent_preview }}</small>
+                        <small v-else>No Attachment</small>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="label-text">Duly accomplished Personal Data
+                        Sheet(PDS) and Work Experience Sheet with recent passport-sized picture (CS Form No. 212,
+                        Revised
+                        2017) which can be downloaded at <a href="https://www.csc.gov.ph/"
+                          class="text-blue-500 hover:underline" target="_blank">www.csc.gov.ph.</a><small
+                          class="text-red-500 ">(Required)</small></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="label-text">Photocopy of valid and updated PRC
+                        License/ID <span class="text-gray-500 ">(if applicable)</span></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="label-text">Photocopy of Certificate of Eligibility/Rating <span
+                          class="text-gray-500 ">(if
+                          applicable)</span></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="label-text">Photocopy of scholastic/academic
+                        recored such as but not limited to Transcript of Records (TOR) and Diploma, including completion
+                        of
+                        graduate and post-graduate units/degrees <span class="text-gray-500 ">(if
+                          applicable)</span></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+
+                    <div>
+                      <label class="label-text">Photocopy of Certificate/s of
+                        Training attended<small class="text-red-500 ">(Required)</small></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="label-text">Photocopy of Certificate of
+                        Employment, Contract of Service, or duly signed Service Record, whichever is/are
+                        applicable</label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="label-text">Photocopy of latest appointment
+                        <span class="text-gray-500 ">(if applicable)</span></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+
+                    <div>
+                      <label class="label-text">Photocopy of the Performance Rating
+                        in the last rating period(s) covering one (1) year performance in the current/latest position
+                        prior
+                        to
+                        the deadline of submission<span class="text-gray-500 ">(if applicable)</span></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+
+                    <div>
+                      <label class="label-text">Checklist of Requirements and
+                        Omnibus Sworn Statement on the Certification on the Authenticity and Veracity (CAV) of the
+                        documents
+                        submitted and Data Privacy Consent Form pursuant to RA No. 10173 (Data Privacy Act of 2012),
+                        using
+                        the
+                        form (Annex C) of DepEd Order No. 007, s. 2023, notarized by authorized official<small
+                          class="text-red-500 ">(Required)</small></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="label-text">Means of Verification (MOVS) showing
+                        Outstanding Accomplishment, Application of Education, and Application of Learning and
+                        Development
+                        reckoned from the date of last issurance of appointment.<small
+                          class="text-red-500 ">(Required)</small></label>
+                      <div class="flex items-center mt-2 bg-gray-100 rounded-md p-2">
+                        <img src="/assets/pdf.png" alt="">
+                        <small class="grow">Letter of intent addressed to the Regional Director. Please include the
+                          position
+                          and its item number with corresponding Functional Division/Section/Unit(Required).pdf </small>
+                      </div>
+                    </div>
+
+
+
+
+
+                  </div>
+                </div>
+              </div>
+
+
+
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-action">
+          <form method="dialog" class="space-x-2">
+            <!-- if there is a button, it will close the modal -->
+            <button class="btn btn-outline" @click="previewModal.modalClose()">Edit</button>
+            <button class="btn btn-error text-white" @click="reloadWindow">Submit</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   </div>
 </template>
