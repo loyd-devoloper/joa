@@ -17,7 +17,7 @@ const maincontainer = ref(null)
 const fetchUser = async (page = 1) => {
   maincontainer.value.scrollIntoView({ behavior: 'smooth' });
   loading.value = true;
-  const { data } = await axios.get(`${import.meta.env.VITE_BACKEND}/api/recruitment/jobs?page=${page}&q=${search.value}`);
+  const { data } = await axios.get(`/api/recruitment/jobs?page=${page}&q=${search.value}`);
 
   if (!!data.prev_page_url) {
     prevPage.value = data.prev_page_url.split('?page=')[1];
@@ -48,13 +48,13 @@ onMounted(() => {
 
 <template class="">
 
-  <div class="font-Roboto" ref="maincontainer">
+  <div class="font-Roboto " ref="maincontainer">
     <Header />
-    <div class="bg-gray-100 min-h-[calc(100svh-24.5rem)]">
+    <div class="bg-[#FFFFFF] min-h-[calc(100svh-24.5rem)]">
       <div class="w-full  h-[20rem] flex items-center relative overflow-hidden">
         <img src="/assets/homepage-bg.jpg" class="absolute  object-cover w-full h-full brightness-50" alt="">
         <form @submit.prevent="searchJob()" class="relative w-[40rem] mx-auto  rounded-full">
-          
+
           <input placeholder="ex: Programmer III" v-model="search"
             class="rounded-full w-full h-16 bg-transparent py-2 pl-8 pr-32 outline-none border-2 border-gray-100 bg-white shadow-md hover:outline-none focus:ring-teal-200 focus:border-teal-200"
             type="text" name="query" id="query">
@@ -68,13 +68,13 @@ onMounted(() => {
             Search
           </button>
         </form>
-       </div>
+      </div>
       <section class="max-w-screen-xl mx-auto pt-14 pb-20 ">
-     
+
         <h1 class=" pb-10 text-2xl text-center pt-10 font-Roboto_bold text-black/90">Available Job</h1>
 
         <!-- available job -->
-        <div class="grid grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 px-5 md:px-0">
           <div v-if="loading" class="py-4 rounded shadow-md h-[19rem]  animate-pulse bg-gray-50">
             <div class="flex p-4 space-x-4 sm:px-8 ">
 
@@ -105,47 +105,50 @@ onMounted(() => {
           </div>
 
           <div v-if="loading == false" v-for="jobItem in jobs" :key="jobItem"
-            class="border p-4 bg-white rounded-md shadow-md hover:scale-105 transition-all ease-in-out duration-500 relative min-h-[19rem]">
-            <!-- status -->
-            <!-- <span v-if="jobItem.status_of_hiring"
-              class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">
-              Open</span>
-            <span v-else
-              class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Close</span> -->
-
+            class="border-2 p-4 bg-white rounded-lg shadow-lg hover:scale-105 transition-all ease-in-out duration-500 relative min-h-[19rem]">
+       
             <h1 class=" font-Roboto_bold text-2xl max-w-[88%] text-black/90 pb-2">{{ jobItem.job_title }}</h1>
-          <hr>
+            <hr>
             <div class="space-y-3 mt-3">
-              <!-- status  -->
-              <div class="flex items-center gap-2">
-                <p class="text-gray-500">Status:</p>
-                <span v-if="jobItem.status"
-                  class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  font-Roboto_bold flex items-center  gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                  stroke="currentColor" class="size-5">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-                  Open</span>
-                  <span v-else
-                  class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  font-Roboto_bold flex items-center  gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-</svg>
-
-                  Close</span>
-              </div>
-
-              <!-- posted -->
-              <div class="flex items-center gap-2">
-                <p class="text-gray-500">Posted:</p>
-               <p>{{ moment(jobItem.created_at).fromNow() }}</p>
+                <!-- posted -->
+                <div class="flex items-center gap-2">
+                <p class="text-gray-500">Posting Date:</p>
+                <p>{{ moment(jobItem.batch_info?.posting_date).format('ll') }}</p>
               </div>
               <!-- close date -->
               <div class="flex items-center gap-2">
                 <p class="text-gray-500">Close Date:</p>
-               <p>{{ moment(jobItem.expiration_date).format('ll') }}</p>
+          
+                <p>{{ moment(jobItem.batch_info?.closing_date).format('ll') }}</p>
+              
               </div>
+              <!-- status  -->
+              <div class="flex items-center gap-2">
+                <p class="text-gray-500">Status:</p>
+                <span v-if="jobItem.status_of_hiring && moment(jobItem.batch_info?.closing_date).isSameOrAfter(moment().format('MMM DD, YYYY'))"
+                  class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  font-Roboto_bold flex items-center  gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  Open</span>
+                <span v-else
+                  class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  font-Roboto_bold flex items-center  gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  {{  }}
+                  Close</span>
+              </div>
+              <!-- PLANTILA -->
+              <div v-show="!!jobItem.plantilla_item" class="flex items-center gap-2">
+                <p class="text-gray-500">Plantila Item:</p>
+                <p>{{jobItem.plantilla_item }}</p>
+              </div>
+          
             </div>
             <div class="absolute bottom-4 right-3">
               <router-link :to="{ name: 'job', params: { position: jobItem.job_title, id: jobItem.job_id } }"
@@ -170,6 +173,7 @@ onMounted(() => {
           <button @click="fetchUser(nextPage)" :disabled="nextPage == null ? true : false"
             class="bg-[#04508c] text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:bg-blue-600 "
             :class="nextPage == null ? 'opacity-50' : 'opacity-100'">Next</button>
+           
         </div>
       </section>
     </div>

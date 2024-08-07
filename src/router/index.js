@@ -33,7 +33,9 @@ const router = createRouter({
       component: () => import('../views/Job.vue'),
       meta:{
         title: 'Job'
-      }
+      },
+     
+      
     }
   ]
 })
