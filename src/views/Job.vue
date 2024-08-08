@@ -3,7 +3,7 @@
 
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue'
-import BasicInformation from '@/views/Step/BasicInformation.vue'
+
 import { useRoute } from 'vue-router';
 import { onMounted, reactive, ref, watch } from 'vue';
 import moment from 'moment';
@@ -13,6 +13,7 @@ const step = ref(1);
 const successModal = ref(null);
 const previewModal = ref(null);
 const application_code = ref('');
+const backendurl = ref(import.meta.env.VITE_BACKEND);
 const jobInfo = ref({
   fname: 'dsad'
 });
@@ -37,45 +38,34 @@ const data = reactive({
   letter_of_intent: null,
   pds: null,
   prc: null,
-  eligibility: null,
+  // eligibility: null,
   tor: null,
   training_attended: null,
   certificate_of_employment: null,
   latest_appointment: null,
   performance_rating: null,
   cav: null,
-  movs: null,
+  awards_recognition: null,
+  research_innovation: null,
+  membership_in_national: null,
+  resource_speakership: null,
+  neap: null,
+  application_of_education: null,
+  l_and_d: null,
+
 
 
 })
 
 // file upload
-const fileUpload = (type) => {
+const fileUpload = (name, type = 1) => {
 
-  if (type === 1) {
-    data.letter_of_intent = event.target.files[0];
-    letter_of_intent_preview.value = data.letter_of_intent.name;
-  } else if (type === 2) {
-    data.pds = event.target.files[0];
-
-  } else if (type === 3) {
-    data.prc = event.target.files[0];
-  } else if (type === 4) {
-    data.eligibility = event.target.files[0];
-  } else if (type === 5) {
-    data.tor = event.target.files[0];
-  } else if (type === 6) {
-    data.training_attended = event.target.files[0];
-  } else if (type === 7) {
-    data.certificate_of_employment = event.target.files[0];
-  } else if (type === 8) {
-    data.latest_appointment = event.target.files[0];
-  } else if (type === 9) {
-    data.performance_rating = event.target.files[0];
-  } else if (type === 10) {
-    data.cav = event.target.files[0];
-  } else if (type === 11) {
-    data.movs = event.target.files[0];
+  if (type == 1) {
+    data[name] = event.target.files[0];
+  } else {
+    data[name] = event.target.files[0];
+    // data.letter_of_intent = event.target.files[0];
+    // //   letter_of_intent_preview.value = data.letter_of_intent.name;
   }
 
 }
@@ -94,7 +84,7 @@ const toggleDecription = ref(true);
 // fetch information
 const fetchJobInfo = async () => {
   maincontainer.value.scrollIntoView({ behavior: 'smooth' });
-  const { data } = await axios.get(`/api/recruitment/job?id=${route.params.id}`)
+  const { data } = await axios.get(`${backendurl.value}/api/recruitment/job?id=${route.params.id}`)
   jobInfo.value = data;
   loading.value = false;
 }
@@ -102,22 +92,29 @@ const fetchJobInfo = async () => {
 // submit application
 const submitApplication = async () => {
   try {
-    previewModal.value.showModal();
-    // applicationLoading.value = true;
-    // const formData = new FormData();
-    // Object.entries(data).forEach(([key, value]) => {
-    //   formData.append(key, value);
-    // });
+    // previewModal.value.showModal();
+    applicationLoading.value = true;
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
 
-    // formData.append('job_id', route.params.id);
-    // const res = await axios.post(`/api/recruitment/submit/application`, formData)
-    // applicationLoading.value = false;
-    // application_code.value = res.data;
+    formData.append('job_id', route.params.id);
+    const res = await axios.post(`${backendurl.value}/api/recruitment/submit/application`, formData)
+    applicationLoading.value = false;
+    application_code.value = res.data;
     // successModal.value.showModal()
 
   } catch (error) {
 
   }
+}
+// proceed with application
+const proceedWithApplication = async () => {
+
+  previewModal.value.showModal();
+
+
 }
 // reload page after cloosing modal
 const reloadWindow = () => {
@@ -151,7 +148,7 @@ watch(data, (newValue, OldValue) => {
 onMounted(async () => {
   await fetchJobInfo()
 
-  previewModal.value.showModal();
+  // previewModal.value.showModal();
 
 })
 
@@ -210,7 +207,7 @@ onMounted(async () => {
       </div>
       <!-- form  -->
       <div v-show="loading == false" class="flex-1 flex-grow-[2.5]">
-        <form @submit.prevent="submitApplication()" ref="form" class="w-full max-w-screen-lg mx-auto py-8">
+        <form @submit.prevent="proceedWithApplication()" ref="form" class="w-full max-w-screen-lg mx-auto py-8">
           <div class="bg-white  p-8 rounded-lg shadow-md border ">
 
             <div class="flex justify-between">
@@ -356,69 +353,67 @@ onMounted(async () => {
 
             <!-- step 2 -->
             <div v-show="step == 2" class="my-10 space-y-10">
-
-
               <div>
                 <label class="label-text">Letter of intent addressed to the
                   Regional
                   Director. Please include the position and its item number with corresponding Functional
                   Division/Section/Unit<small class="text-red-500 ">(Required)</small></label>
-                <input type="file" @change="fileUpload(1)" class="file-input  w-full file-input-ghost border-gray-300 "
-                  accept="application/pdf" required>
+                <input type="file" @change="fileUpload('letter_of_intent')"
+                  class="file-input  w-full file-input-ghost border-gray-300 " accept="application/pdf" required>
               </div>
-
               <div>
                 <label class="label-text">Duly accomplished Personal Data
                   Sheet(PDS) and Work Experience Sheet with recent passport-sized picture (CS Form No. 212, Revised
                   2017) which can be downloaded at <a href="https://www.csc.gov.ph/"
                     class="text-blue-500 hover:underline" target="_blank">www.csc.gov.ph.</a><small
                     class="text-red-500 ">(Required)</small></label>
-                <input type="file" @change="fileUpload(2)" class="file-input  w-full file-input-ghost border-gray-300  "
-                  accept="application/pdf" required>
+                <input type="file" @change="fileUpload('pds')"
+                  class="file-input  w-full file-input-ghost border-gray-300  " accept="application/pdf" required>
               </div>
-
               <div>
                 <label class="label-text">Photocopy of valid and updated PRC
-                  License/ID <span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" @change="fileUpload(3)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf">
+                  License/ID or Photocopy of Certificate of Eligibility/Rating <span class="text-gray-500 ">(if
+                    applicable)</span></label>
+                <input type="file" @change="fileUpload('prc')"
+                  class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
               </div>
-              <div>
+              <!-- <div>
                 <label class="label-text">Photocopy of Certificate of Eligibility/Rating <span
                     class="text-gray-500 ">(if
                     applicable)</span></label>
                 <input type="file" @change="fileUpload(4)" class="file-input  w-full file-input-ghost border-gray-300"
                   accept="application/pdf">
-              </div>
+              </div> -->
 
               <div>
                 <label class="label-text">Photocopy of scholastic/academic
                   recored such as but not limited to Transcript of Records (TOR) and Diploma, including completion of
-                  graduate and post-graduate units/degrees <span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" @change="fileUpload(5)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf">
+                  graduate and post-graduate units/degrees <small class="text-red-500 ">(Required)</small></label>
+                <input type="file" @change="fileUpload('tor')"
+                  class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf" required>
               </div>
 
 
               <div>
                 <label class="label-text">Photocopy of Certificate/s of
                   Training attended<small class="text-red-500 ">(Required)</small></label>
-                <input type="file" @change="fileUpload(6)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf" required>
+                <input type="file" @change="fileUpload('training_attended')"
+                  class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf" required>
               </div>
 
               <div>
                 <label class="label-text">Photocopy of Certificate of
-                  Employment, Contract of Service, or duly signed Service Record, whichever is/are applicable</label>
-                <input type="file" @change="fileUpload(7)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf">
+                  Employment, Contract of Service, or duly signed Service Record <span class="text-gray-500 ">(if
+                    applicable)</span></label>
+                <input type="file" @change="fileUpload('certificate_of_employment')"
+                  class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
               </div>
 
               <div>
                 <label class="label-text">Photocopy of latest appointment
                   <span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" @change="fileUpload(8)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf">
+                <input type="file" @change="fileUpload('latest_appointment')"
+                  class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
               </div>
 
 
@@ -426,8 +421,8 @@ onMounted(async () => {
                 <label class="label-text">Photocopy of the Performance Rating
                   in the last rating period(s) covering one (1) year performance in the current/latest position prior to
                   the deadline of submission<span class="text-gray-500 ">(if applicable)</span></label>
-                <input type="file" @change="fileUpload(9)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf">
+                <input type="file" @change="fileUpload('performance_rating')"
+                  class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
               </div>
 
 
@@ -435,42 +430,69 @@ onMounted(async () => {
                 <label class="label-text">Checklist of Requirements and
                   Omnibus Sworn Statement on the Certification on the Authenticity and Veracity (CAV) of the documents
                   submitted and Data Privacy Consent Form pursuant to RA No. 10173 (Data Privacy Act of 2012), using the
-                  form (Annex C) of DepEd Order No. 007, s. 2023, notarized by authorized official<small
-                    class="text-red-500 ">(Required)</small></label>
-                <input type="file" @change="fileUpload(10)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf" required>
+                  form (Annex C) of DepEd Order No. 007, s. 2023, notarized by authorized official <span
+                    class="text-gray-500 ">(if applicable)</span></label>
+                <input type="file" @change="fileUpload('cav')"
+                  class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
               </div>
 
+              <!-- movs -->
               <div>
                 <label class="label-text">Means of Verification (MOVS) showing
                   Outstanding Accomplishment, Application of Education, and Application of Learning and Development
-                  reckoned from the date of last issurance of appointment.<small
-                    class="text-red-500 ">(Required)</small></label>
-                <input type="file" @change="fileUpload(11)" class="file-input  w-full file-input-ghost border-gray-300"
-                  accept="application/pdf" required>
+                  reckoned from the date of last issurance of appointment.<span class="text-gray-500 ">(if
+                    applicable)</span></label>
+                <div class="px-2 pt-5 space-y-2">
+                  <label class="label-text">Outstanding Accomplishments:</label>
+                  <div class="px-8">
+                    <div>
+                      <label class="label-text">a. Awards & Recognition <span class="text-gray-500 ">(if
+                          applicable)</span></label>
+                      <input type="file" @change="fileUpload('awards_recognition', 2)"
+                        class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
+                    </div>
+                    <div>
+                      <label class="label-text">b. Research & Innovation <span class="text-gray-500 ">(if
+                          applicable)</span></label>
+                      <input type="file" @change="fileUpload('research_innovation', 2)"
+                        class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
+                    </div>
+                    <div>
+                      <label class="label-text">c. Subject Matter Expert / Membership in national TWGs or Committees
+                        <span class="text-gray-500 ">(if applicable)</span></label>
+                      <input type="file" @change="fileUpload('membership_in_national', 2)"
+                        class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
+                    </div>
+                    <div>
+                      <label class="label-text">d. Resource Speakership / Learning facilitation <span
+                          class="text-gray-500 ">(if applicable)</span></label>
+                      <input type="file" @change="fileUpload('resource_speakership', 2)"
+                        class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
+                    </div>
+                    <div>
+                      <label class="label-text">d. NEAP Accredited learning Falicitator <span class="text-gray-500 ">(if
+                          applicable)</span></label>
+                      <input type="file" @change="fileUpload('neap', 2)"
+                        class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
+                    </div>
+                  </div>
+                  <div>
+                    <label class="label-text">Application of Education <span class="text-gray-500 ">(if
+                        applicable)</span></label>
+                    <input type="file" @change="fileUpload('application_of_education', 2)"
+                      class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
+                  </div>
+                  <div>
+                    <label class="label-text">Application of learning & Development <span class="text-gray-500 ">(if
+                        applicable)</span></label>
+                    <input type="file" @change="fileUpload('l_and_d', 2)"
+                      class="file-input  w-full file-input-ghost border-gray-300" accept="application/pdf">
+                  </div>
+                </div>
+
               </div>
 
 
-              <div>
-
-                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2" required>
-                <span class="text-xs font-Roboto_bold">CERTIFICATION OF AUTHENTICITY AND VERACITY</span>
-                <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
-                  of my personal knowledge amd belief, and the documents submitted herewith are original and/or
-                  certified
-                  true copies thereof.</p>
-              </div>
-
-
-              <div>
-
-                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2" required>
-                <span class="text-xs font-Roboto_bold">DATA PRIVACY CONTENT</span>
-                <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
-                  of my personal knowledge amd belief, and the documents submitted herewith are original and/or
-                  certified
-                  true copies thereof.</p>
-              </div>
 
 
 
@@ -496,10 +518,7 @@ onMounted(async () => {
                   stroke-width="1.5" stroke="currentColor" class="size-6 animate-spin">
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-
-                SUBMIT
-                APPLICATION</button>
+                </svg>Proceed with application</button>
             </div>
           </div>
         </form>
@@ -520,7 +539,8 @@ onMounted(async () => {
                 v-if="jobInfo.status_of_hiring && moment(jobInfo.batch_info?.closing_date).isSameOrAfter(moment().format('MMM DD, YYYY'))"
                 class="bg-green-100 text-green-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Open</span>
               <span v-else
-                class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Close</span>
+                class="bg-red-100 text-red-600 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full  absolute font-Roboto_bold top-2 right-0">Close
+              </span>
 
             </div>
             <hr>
@@ -604,7 +624,7 @@ onMounted(async () => {
     </dialog>
     <!-- preview modal -->
     <dialog ref="previewModal" class="modal z-50">
-      <div class="modal-box  max-w-screen-xl bg-white">
+      <form v-on:submit.prevent="submitApplication()" class="modal-box  max-w-screen-xl bg-white">
 
         <div class="">
 
@@ -613,61 +633,59 @@ onMounted(async () => {
               Preview
             </h3>
             <div class="mt-2 space-y-4 ">
-                 <!-- Basic Information -->
+              <!-- Basic Information -->
               <div class="collapse  collapse-arrow  	 bg-base-200 border-none outline-none ring-0">
                 <input type="checkbox" checked />
                 <div class="collapse-title text-xl font-medium"> Basic Information</div>
                 <div class="collapse-content">
-               
-
                   <div class="mb-6">
-
                     <!-- input -->
                     <div class="grid grid-cols-1 gap-4 pt-10">
-
                       <div>
                         <label for="fname" class="block text-gray-700  mb-1">First name<small
                             class="text-red-500 ">(Required)</small></label>
                         <input type="text" name="fname" v-model="data.fname" ref="fname"
-                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.fname ? 'border-red-500' : ''"
-                          required formnovalidate disabled="true">
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.fname ? 'border-red-500' : ''" required formnovalidate disabled="true">
                         <small class="text-red-500" v-if="errors.fname"> The First name field is required. </small>
                       </div>
                       <div>
                         <label for="middlename" class="block text-gray-700  mb-1">Middle Name<small
                             class="text-red-500 ">(Required)</small></label>
                         <input type="middlename" v-model="data.mname" ref="mname"
-                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.mname ? 'border-red-500' : ''"
-                          required disabled="true">
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.mname ? 'border-red-500' : ''" required disabled="true">
                         <small class="text-red-500" v-if="errors.mname"> The Last name field is required. </small>
                       </div>
                       <div>
                         <label for="lastname" class="block text-gray-700  mb-1">Last name<small
                             class="text-red-500 ">(Required)</small></label>
                         <input type="lastname" v-model="data.lname" ref="lname"
-                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.lname ? 'border-red-500' : ''"
-                          required disabled="true">
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.lname ? 'border-red-500' : ''" required disabled="true">
                         <small class="text-red-500" v-if="errors.lname"> The Last name field is required. </small>
                       </div>
                       <div>
                         <label for="email" class="block text-gray-700  mb-1">Email<small
                             class="text-red-500 ">(Required)</small></label>
                         <input type="email" v-model="data.email" ref="email"
-                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.email ? 'border-red-500' : ''"
-                          required disabled="true">
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.email ? 'border-red-500' : ''" required disabled="true">
                         <small class="text-red-500" v-if="errors.email"> The Email field is required. </small>
                       </div>
                       <div>
                         <label for="religion" class="block text-gray-700  mb-1">Religion</label>
                         <input type="text" disabled="true" name="religion" v-model="data.religion" ref="religion"
-                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.religion ? 'border-red-500' : ''">
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.religion ? 'border-red-500' : ''">
 
                       </div>
                       <div>
                         <label for="mobile_number" class="block text-gray-700  mb-1">Mobile Number<small
                             class="text-red-500 ">(Required)</small></label>
                         <input type="text" disabled="true" name="mobile_number" v-model="data.mobile_number"
-                          ref="mobile_number" class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          ref="mobile_number"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
                           :class="errors.mobile_number ? 'border-red-500' : ''" required>
                         <small class="text-red-500" v-if="errors.mobile_number"> The Mobile Number field is required.
                         </small>
@@ -698,7 +716,8 @@ onMounted(async () => {
                         <label for="sex" class="block text-gray-700  mb-1">Sex<small
                             class="text-red-500 ">(Required)</small></label>
 
-                        <select v-model="data.sex" disabled="true" class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                        <select v-model="data.sex" disabled="true"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
                           :class="errors.sex ? 'border-red-500' : ''" required>
                           <option value="M">Male</option>
                           <option value="F">Female</option>
@@ -708,7 +727,8 @@ onMounted(async () => {
                       <div>
                         <label for="civil_status" class="block text-gray-700  mb-1">Civil Status<small
                             class="text-red-500 ">(Required)</small></label>
-                        <select v-model="data.civil_status" disabled="true" class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                        <select v-model="data.civil_status" disabled="true"
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
                           :class="errors.civil_status ? 'border-red-500' : ''" required>
                           <option value="" disabled selected>Select an option</option>
                           <option value="single">Single</option>
@@ -724,8 +744,8 @@ onMounted(async () => {
                         <label for="address" class="block text-gray-700  mb-1">Complete Address<small
                             class="text-red-500 ">(Required)</small></label>
                         <textarea type="text" v-model="data.address" disabled="true" ref="address"
-                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  " :class="errors.address ? 'border-red-500' : ''"
-                          required></textarea>
+                          class="w-full rounded-lg border py-2 px-3 bg-[#fafafa] cursor-not-allowed  "
+                          :class="errors.address ? 'border-red-500' : ''" required></textarea>
                         <small class="text-red-500" v-if="errors.address"> The Address field is required. </small>
                       </div>
                     </div>
@@ -898,18 +918,39 @@ onMounted(async () => {
 
 
 
+              <div>
+                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2" required>
+                <span class="text-xs font-Roboto_bold">CERTIFICATION OF AUTHENTICITY AND VERACITY</span>
+                <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
+                  of my personal knowledge amd belief, and the documents submitted herewith are original and/or
+                  certified
+                  true copies thereof.</p>
+              </div>
+
+
+              <div>
+
+                <input type="checkbox" id="mobile_number" class=" py-2 px-3 mr-2" required>
+                <span class="text-xs font-Roboto_bold">DATA PRIVACY CONTENT</span>
+                <p class="text-sm opacity-70 pl-6">I hereby certify that all information above are true and correct, and
+                  of my personal knowledge amd belief, and the documents submitted herewith are original and/or
+                  certified
+                  true copies thereof.</p>
+              </div>
 
             </div>
           </div>
         </div>
         <div class="modal-action">
-          <form method="dialog" class="space-x-2">
+          <div class="space-x-2 flex items-center">
             <!-- if there is a button, it will close the modal -->
-            <button class="btn btn-outline" @click="previewModal.modalClose()">Edit</button>
-            <button class="btn btn-error text-white" @click="reloadWindow">Submit</button>
-          </form>
+            <form method="dialog">
+              <button type="submit" class="btn btn-outline">Edit</button>
+            </form>
+            <button type="submit" class="btn btn-error text-white">Submit Application</button>
+          </div>
         </div>
-      </div>
+      </form>
     </dialog>
   </div>
 </template>

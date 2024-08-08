@@ -17,7 +17,7 @@ const maincontainer = ref(null)
 const fetchUser = async (page = 1) => {
   maincontainer.value.scrollIntoView({ behavior: 'smooth' });
   loading.value = true;
-  const { data } = await axios.get(`/api/recruitment/jobs?page=${page}&q=${search.value}`);
+  const { data } = await axios.get(`${backendurl.value}/api/recruitment/jobs?page=${page}&q=${search.value}`);
 
   if (!!data.prev_page_url) {
     prevPage.value = data.prev_page_url.split('?page=')[1];
@@ -42,7 +42,7 @@ const searchJob = async () => {
 }
 onMounted(() => {
   fetchUser();
-
+  
 })
 </script>
 
